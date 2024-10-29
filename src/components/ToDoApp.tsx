@@ -19,6 +19,13 @@ function ToDoApp() {
     setToDos(updatedTasks);
   };
 
+  const changeStatus = (id: string) => {
+    const updatedTasks = toDos.map((task) =>
+      task.id != id ? task : { ...task, isDone: !task.isDone }
+    );
+    setToDos(updatedTasks);
+  };
+
   const setAllAsDone = toDos.map((task) => ({
     ...task,
     isDone: true,
@@ -42,7 +49,11 @@ function ToDoApp() {
       <h2>Make something TO-DO!</h2>
       <CreateTask createTask={handleCreateTask} />
       <RemoveTasks markAllAsDone={handleRemoveTasks} />
-      <TaskList tasks={toDos} handleRemove={handleRemoveTask} />
+      <TaskList
+        tasks={toDos}
+        handleRemove={handleRemoveTask}
+        changeStatus={changeStatus}
+      />
     </>
   );
 }

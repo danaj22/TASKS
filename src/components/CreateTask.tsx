@@ -7,17 +7,15 @@ interface CreateTaskProps {
 function CreateTask(props: CreateTaskProps) {
   const [taskName, setTaskName] = useState("");
 
-  function handleOnSubmit(event: FormEvent<HTMLFormElement>): void {
+  function addTask(event: FormEvent<HTMLFormElement>): void {
     event.preventDefault();
-    console.log(event);
-    console.log(taskName);
     props.createTask(taskName);
     setTaskName("");
   }
 
   return (
     <>
-      <form onSubmit={handleOnSubmit}>
+      <form onSubmit={addTask}>
         <input
           placeholder="Write a task..."
           value={taskName}
