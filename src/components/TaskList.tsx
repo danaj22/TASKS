@@ -1,3 +1,4 @@
+import { useRef, useState } from "react";
 import "./TaskList.css";
 
 export interface Task {
@@ -13,10 +14,28 @@ interface TaskListProps {
 }
 
 function TaskList(props: TaskListProps) {
+  const [tasks, setTasks] = useState(props.tasks);
+  const dragTask = useRef<number>(0);
+  const dragedOverTask = useRef<number>(0);
+
+  const handleSort = () => {
+    const updatedTasks = [...tasks];
+    const temp = updatedTasks[dragTask.current];
+    updatedTasks[dragTask.current] = updatedTasks[dragedOverTask.current];
+    updatedTasks[dragedOverTask.current] = temp;
+
+    setTasks(updatedTasks);
+  };
+
   return (
     <ul>
-      {props.tasks.map((task) => (
+      {tasks.map((task, index) => (
         <li
+          draggable
+          onDragStart={() => (dragTask.current = index)}
+          onDragEnter={() => (dragedOverTask.current = index)}
+          onDragEnd={handleSort}
+          onDragOver={(event) => event.preventDefault()}
           key={task.id}
           className={`taskItem ${task.isDone ? "taskDone" : ""}`}
         >
