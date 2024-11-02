@@ -1,0 +1,25 @@
+.taskDone {
+  text-decoration: line-through;
+}
+ul {
+  display: flex;
+  flex-direction: column;
+}
+.taskItem {
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.taskLabel {
+  opacity: 0;
+
+  &.visible {
+    opacity: 1;
+  }
+}
+
+.taskLabel:hover {
+  opacity: 1;
+}
