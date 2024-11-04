@@ -7,13 +7,18 @@ interface TaskItemProps {
   onDragEnter: () => void;
   onDragEnd: () => void;
   changeStatus: () => void;
-  save: () => void;
+  save: (taskId: string, value: string) => void;
   onEdit: () => void;
   onRemove: () => void;
 }
 
 function TaskItem({ task, ...props }: TaskItemProps) {
   const [text, setText] = useState(task.name);
+
+  const handleSave = () => {
+    props.save(task.id, text);
+    setText(task.name);
+  };
 
   return (
     <li
@@ -40,12 +45,12 @@ function TaskItem({ task, ...props }: TaskItemProps) {
             checked={task.isDone}
             onChange={props.changeStatus}
           />
-          {text}
+          {task.name}
         </label>
       )}
       <span>
         {task.isEdited ? (
-          <button onClick={props.save}>💾</button>
+          <button onClick={handleSave}>💾</button>
         ) : (
           <button onClick={props.onEdit}>✏️</button>
         )}

@@ -63,7 +63,7 @@ function TaskList(props: TaskListProps) {
           onDragEnter={() => handleDragEnter(index)}
           onDragEnd={handleSort}
           changeStatus={() => props.changeStatus(task.id)}
-          save={() => handleSave(task.id, "VALUE 1")}
+          save={handleSave}
           onEdit={() => handleEdit(task.id)}
           onRemove={() => props.handleRemove(task.id)}
         />
