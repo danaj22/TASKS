@@ -4,55 +4,63 @@ import TaskList, { Task } from "./TaskList";
 import RemoveTasks from "./RemoveTasks";
 
 function ToDoApp() {
-  const [toDos, setToDos] = useState<Task[]>([
-    { id: "1", name: "Task 1" },
+  const [tasks, setTasks] = useState<Task[]>([
+    { id: "1", name: "Task 1", isDone: false },
     { id: "2", name: "Task 2", isDone: true },
-    { id: "3", name: "Task 3" },
+    { id: "3", name: "Task 3", isDone: false },
   ]);
 
-  const handleCreateTask = (name: string) => {
-    setToDos([...toDos, { id: name, name: name }]);
+  const handleCreate = (name: string) => {
+    setTasks([
+      ...tasks,
+      { id: name, name: name, isDone: false, isEdited: false },
+    ]);
   };
 
-  const handleRemoveTask = (id: string) => {
-    const updatedTasks = toDos.filter((x) => x.id !== id);
-    setToDos(updatedTasks);
+  const handleRemove = (id: string) => {
+    const updatedTasks = tasks.filter((x) => x.id !== id);
+    setTasks(updatedTasks);
   };
 
-  const changeStatus = (id: string) => {
-    const updatedTasks = toDos.map((task) =>
+  const handleChangeStatus = (id: string) => {
+    const updatedTasks = tasks.map((task) =>
       task.id != id ? task : { ...task, isDone: !task.isDone }
     );
-    setToDos(updatedTasks);
+    setTasks(updatedTasks);
   };
 
-  const setAllAsDone = toDos.map((task) => ({
+  const handleUpdateTasks = (tasks: Task[]) => {
+    setTasks(tasks);
+  };
+
+  const setAllAsDone = tasks.map((task) => ({
     ...task,
     isDone: true,
   }));
 
-  const setAllAsNotDone = toDos.map((task) => ({
+  const setAllAsNotDone = tasks.map((task) => ({
     ...task,
     isDone: false,
   }));
 
-  const handleRemoveTasks = () => {
-    const updatedTasks = toDos.every((task) => task.isDone)
+  const handleRemoveAll = () => {
+    const updatedTasks = tasks.every((task) => task.isDone)
       ? setAllAsNotDone
       : setAllAsDone;
 
-    setToDos(updatedTasks);
+    setTasks(updatedTasks);
   };
 
   return (
     <>
       <h2>Make something TO-DO!</h2>
-      <CreateTask createTask={handleCreateTask} />
-      <RemoveTasks markAllAsDone={handleRemoveTasks} />
+      <CreateTask createTask={handleCreate} />
+      <RemoveTasks markAllAsDone={handleRemoveAll} />
       <TaskList
-        tasks={toDos}
-        handleRemove={handleRemoveTask}
-        changeStatus={changeStatus}
+        tasks={tasks}
+        handleRemove={handleRemove}
+        changeStatus={handleChangeStatus}
+        updateTasks={handleUpdateTasks}
       />
     </>
   );

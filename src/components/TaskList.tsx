@@ -1,60 +1,72 @@
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import "./TaskList.css";
+import TaskItem from "./TaskItem";
 
 export interface Task {
   id: string;
   name: string;
   isDone?: boolean;
+  isEdited?: boolean;
 }
 
 interface TaskListProps {
   tasks: Task[];
   handleRemove: (id: string) => void;
   changeStatus: (id: string) => void;
+  updateTasks: (tasks: Task[]) => void;
 }
 
 function TaskList(props: TaskListProps) {
-  const [tasks, setTasks] = useState(props.tasks);
   const dragTask = useRef<number>(0);
   const dragedOverTask = useRef<number>(0);
 
+  const handleDragStart = (index: number) => {
+    dragTask.current = index;
+  };
+
+  const handleDragEnter = (index: number) => {
+    dragedOverTask.current = index;
+  };
+
   const handleSort = () => {
-    const updatedTasks = [...tasks];
+    const updatedTasks = [...props.tasks];
     const temp = updatedTasks[dragTask.current];
     updatedTasks[dragTask.current] = updatedTasks[dragedOverTask.current];
     updatedTasks[dragedOverTask.current] = temp;
 
-    setTasks(updatedTasks);
+    props.updateTasks(updatedTasks);
+  };
+
+  const handleEdit = (taskId: string) => {
+    const updatedTasks = props.tasks.map((el) => {
+      return el.id == taskId ? { ...el, isEdited: true } : el;
+    });
+
+    props.updateTasks(updatedTasks);
+  };
+
+  const handleSave = (taskId: string, value: string) => {
+    const updatedTasks = props.tasks.map((el) =>
+      el.id == taskId ? { ...el, name: value, isEdited: false } : el
+    );
+
+    props.updateTasks(updatedTasks);
   };
 
   return (
     <ul>
-      {tasks.map((task, index) => (
-        <li
-          draggable
-          onDragStart={() => (dragTask.current = index)}
-          onDragEnter={() => (dragedOverTask.current = index)}
-          onDragEnd={handleSort}
-          onDragOver={(event) => event.preventDefault()}
+      {props.tasks.map((task, index) => (
+        <TaskItem
           key={task.id}
-          className={`taskItem ${task.isDone ? "taskDone" : ""}`}
-        >
-          <label>
-            <input
-              className={`taskLabel ${task.isDone ? "visible" : ""}`}
-              type="checkbox"
-              checked={task.isDone}
-              onChange={() => props.changeStatus(task.id)}
-            />
-            {task.name}
-          </label>
-          <span>
-            <button onClick={() => props.changeStatus(task.id)}>
-              {task.isDone ? "❌" : "✅"}
-            </button>
-            <button onClick={() => props.handleRemove(task.id)}>🗑️</button>
-          </span>
-        </li>
+          task={task}
+          onDragStart={() => handleDragStart(index)}
+          onDragEnter={() => handleDragEnter(index)}
+          onDragEnd={handleSort}
+          changeStatus={() => props.changeStatus(task.id)}
+          save={handleSave}
+          onEdit={() => handleEdit(task.id)}
+          onRemove={() => props.handleRemove(task.id)}
+        />
       ))}
     </ul>
   );
