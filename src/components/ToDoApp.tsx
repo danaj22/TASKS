@@ -11,10 +11,7 @@ function ToDoApp() {
   ]);
 
   const handleCreate = (name: string) => {
-    setTasks([
-      ...tasks,
-      { id: name, name: name, isDone: false, isEdited: false },
-    ]);
+    setTasks([...tasks, { id: name, name: name, isDone: false }]);
   };
 
   const handleRemove = (id: string) => {

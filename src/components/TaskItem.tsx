@@ -8,16 +8,21 @@ interface TaskItemProps {
   onDragEnd: () => void;
   changeStatus: () => void;
   save: (taskId: string, value: string) => void;
-  onEdit: () => void;
   onRemove: () => void;
 }
 
 function TaskItem({ task, ...props }: TaskItemProps) {
   const [text, setText] = useState(task.name);
+  const [isEdited, setIsEdited] = useState(false);
 
   const handleSave = () => {
     props.save(task.id, text);
     setText(task.name);
+    setIsEdited(false);
+  };
+
+  const handleEdit = () => {
+    setIsEdited(true);
   };
 
   return (
@@ -29,7 +34,7 @@ function TaskItem({ task, ...props }: TaskItemProps) {
       onDragOver={(event) => event.preventDefault()}
       className={`taskItem ${task.isDone ? "taskDone" : ""}`}
     >
-      {task.isEdited ? (
+      {isEdited ? (
         <input
           value={text}
           autoFocus
@@ -49,10 +54,10 @@ function TaskItem({ task, ...props }: TaskItemProps) {
         </label>
       )}
       <span>
-        {task.isEdited ? (
+        {isEdited ? (
           <button onClick={handleSave}>💾</button>
         ) : (
-          <button onClick={props.onEdit}>✏️</button>
+          <button onClick={handleEdit}>✏️</button>
         )}
         <button onClick={props.changeStatus}>
           {task.isDone ? "❌" : "✅"}

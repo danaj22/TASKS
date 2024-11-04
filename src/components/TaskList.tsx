@@ -6,7 +6,6 @@ export interface Task {
   id: string;
   name: string;
   isDone?: boolean;
-  isEdited?: boolean;
 }
 
 interface TaskListProps {
@@ -37,17 +36,9 @@ function TaskList(props: TaskListProps) {
     props.updateTasks(updatedTasks);
   };
 
-  const handleEdit = (taskId: string) => {
-    const updatedTasks = props.tasks.map((el) => {
-      return el.id == taskId ? { ...el, isEdited: true } : el;
-    });
-
-    props.updateTasks(updatedTasks);
-  };
-
   const handleSave = (taskId: string, value: string) => {
     const updatedTasks = props.tasks.map((el) =>
-      el.id == taskId ? { ...el, name: value, isEdited: false } : el
+      el.id == taskId ? { ...el, name: value } : el
     );
 
     props.updateTasks(updatedTasks);
@@ -64,7 +55,6 @@ function TaskList(props: TaskListProps) {
           onDragEnd={handleSort}
           changeStatus={() => props.changeStatus(task.id)}
           save={handleSave}
-          onEdit={() => handleEdit(task.id)}
           onRemove={() => props.handleRemove(task.id)}
         />
       ))}
