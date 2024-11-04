@@ -1,12 +1,7 @@
 import { useRef } from "react";
 import "./TaskList.css";
 import TaskItem from "./TaskItem";
-
-export interface Task {
-  id: string;
-  name: string;
-  isDone?: boolean;
-}
+import { Task } from "./Task";
 
 interface TaskListProps {
   tasks: Task[];

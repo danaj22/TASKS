@@ -1,4 +1,5 @@
 import { FormEvent, useState } from "react";
+import "./CreateTask.css";
 
 interface CreateTaskProps {
   createTask: (name: string) => void;
@@ -17,7 +18,8 @@ function CreateTask(props: CreateTaskProps) {
     <>
       <form onSubmit={addTask}>
         <input
-          placeholder="Write a task..."
+          className="taskCreated"
+          placeholder="Add task..."
           value={taskName}
           onChange={(e) => setTaskName(e.currentTarget.value)}
           required
