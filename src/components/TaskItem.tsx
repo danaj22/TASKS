@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Task } from "./TaskList";
+import { Task } from "./Task";
 
 interface TaskItemProps {
   task: Task;
