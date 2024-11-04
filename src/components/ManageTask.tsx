@@ -1,4 +1,4 @@
-import { Task } from "./TaskList";
+import { Task } from "./Task";
 
 interface ManageTaskProps {
   task: Task;
