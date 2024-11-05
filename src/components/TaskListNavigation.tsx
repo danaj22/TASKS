@@ -1,22 +1,22 @@
 import { useState } from "react";
-import { Task, TaskCollection } from "./Task";
+import { TaskCollection } from "./Task";
 
 interface TaskListNavigationProps {
   plans: TaskCollection[];
-  selectedList: (tasks: Task[]) => void;
+  selectPlan: (plan: TaskCollection) => void;
   addNewPlan: (planName: string) => void;
 }
 
 function TaskListNavigation({
-  selectedList,
+  selectPlan,
   plans,
   addNewPlan,
 }: TaskListNavigationProps) {
   const [editMode, setEditMode] = useState(false);
   const [planName, setPlanName] = useState("");
 
-  const handleClick = (tasks: TaskCollection) => {
-    selectedList(tasks.tasks);
+  const handleClick = (plan: TaskCollection) => {
+    selectPlan(plan);
   };
 
   const createPlan = (name: string) => {
