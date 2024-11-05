@@ -5,30 +5,29 @@ import RemoveTasks from "./RemoveTasks";
 import TaskListNavigation from "./TaskListNavigation";
 import { Task, TaskCollection } from "./Task";
 
-const taskList = [
-  {
-    id: 1,
-    name: "Plan for today",
-    tasks: [
-      { id: "1", name: "Task 1", isDone: false },
-      { id: "2", name: "Task 2", isDone: true },
-      { id: "3", name: "Task 3", isDone: false },
-    ],
-  },
-  {
-    id: 2,
-    name: "Plan for tomorrow",
-    tasks: [
-      { id: "4", name: "Task 4", isDone: false },
-      { id: "5", name: "Task 5", isDone: false },
-      { id: "6", name: "Task 6", isDone: false },
-    ],
-  },
-];
-
 function ToDoApp() {
-  const [selectedTaskList] = useState<TaskCollection>(taskList[0]);
-  const [tasks, setTasks] = useState<Task[]>(selectedTaskList.tasks);
+  const [plans, setPlans] = useState<TaskCollection[]>([
+    {
+      id: 1,
+      name: "Plan for today",
+      tasks: [
+        { id: "1", name: "Task 1", isDone: false },
+        { id: "2", name: "Task 2", isDone: true },
+        { id: "3", name: "Task 3", isDone: false },
+      ],
+    },
+    {
+      id: 2,
+      name: "Plan for tomorrow",
+      tasks: [
+        { id: "4", name: "Task 4", isDone: false },
+        { id: "5", name: "Task 5", isDone: false },
+        { id: "6", name: "Task 6", isDone: false },
+      ],
+    },
+  ]);
+  const [selectedPlan] = useState<TaskCollection>(plans[0]);
+  const [tasks, setTasks] = useState<Task[]>(selectedPlan.tasks);
 
   const handleCreate = (name: string) => {
     setTasks([...tasks, { id: name, name: name, isDone: false }]);
@@ -68,9 +67,28 @@ function ToDoApp() {
     setTasks(updatedTasks);
   };
 
+  const handleSavePlan = () => {
+    const updatedPlans = plans.map((plan) =>
+      plan.id == selectedPlan.id ? { ...plan, tasks: tasks } : plan
+    );
+    setPlans(updatedPlans);
+  };
+
+  const handleAddPlan = (planName: string) => {
+    const planToAdd = { id: 4, name: planName, tasks: [] };
+    plans.unshift(...[planToAdd]);
+    setPlans(plans);
+    setTasks(planToAdd.tasks);
+  };
+
   return (
     <>
-      <TaskListNavigation taskList={taskList} selectList={setTasks} />
+      <TaskListNavigation
+        plans={plans}
+        selectedList={setTasks}
+        addNewPlan={handleAddPlan}
+      />
+
       <div>
         <h2>Make something TO-DO!</h2>
         <CreateTask createTask={handleCreate} />
@@ -81,7 +99,7 @@ function ToDoApp() {
           changeStatus={handleChangeStatus}
           updateTasks={handleUpdateTasks}
         />
-        <button onClick={() => alert("HI")}>Save</button>
+        <button onClick={handleSavePlan}>Save</button>
       </div>
     </>
   );
