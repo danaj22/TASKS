@@ -6,7 +6,7 @@ import TaskListNavigation from "./TaskListNavigation";
 import { Task, TaskCollection } from "./Task";
 
 function ToDoApp() {
-  const [selectedList] = useState<TaskCollection[]>([
+  const [plans, setPlans] = useState<TaskCollection[]>([
     {
       id: 1,
       name: "Plan for today",
@@ -26,7 +26,8 @@ function ToDoApp() {
       ],
     },
   ]);
-  const [tasks, setTasks] = useState<Task[]>(selectedList[0].tasks);
+  const [selectedPlan] = useState<TaskCollection>(plans[0]);
+  const [tasks, setTasks] = useState<Task[]>(selectedPlan.tasks);
 
   const handleCreate = (name: string) => {
     setTasks([...tasks, { id: name, name: name, isDone: false }]);
@@ -66,9 +67,28 @@ function ToDoApp() {
     setTasks(updatedTasks);
   };
 
+  const handleSavePlan = () => {
+    const updatedPlans = plans.map((plan) =>
+      plan.id == selectedPlan.id ? { ...plan, tasks: tasks } : plan
+    );
+    setPlans(updatedPlans);
+  };
+
+  const handleAddPlan = (planName: string) => {
+    const planToAdd = { id: 4, name: planName, tasks: [] };
+    plans.unshift(...[planToAdd]);
+    setPlans(plans);
+    setTasks(planToAdd.tasks);
+  };
+
   return (
     <>
-      <TaskListNavigation taskList={selectedList} selectList={setTasks} />
+      <TaskListNavigation
+        plans={plans}
+        selectedList={setTasks}
+        addNewPlan={handleAddPlan}
+      />
+
       <div>
         <h2>Make something TO-DO!</h2>
         <CreateTask createTask={handleCreate} />
@@ -79,7 +99,7 @@ function ToDoApp() {
           changeStatus={handleChangeStatus}
           updateTasks={handleUpdateTasks}
         />
-        <button onClick={() => alert("HI")}>Save</button>
+        <button onClick={handleSavePlan}>Save</button>
       </div>
     </>
   );
