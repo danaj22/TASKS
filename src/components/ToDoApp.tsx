@@ -5,87 +5,97 @@ import RemoveTasks from "./RemoveTasks";
 import TaskListNavigation from "./TaskListNavigation";
 import { Task, TaskCollection } from "./Task";
 
+const sampleData = [
+  {
+    id: 1,
+    name: "Plan for today",
+    tasks: [
+      { id: "1", name: "Eat", isDone: false },
+      { id: "2", name: "Work", isDone: true },
+      { id: "3", name: "Sleep", isDone: false },
+    ],
+  },
+  {
+    id: 2,
+    name: "Plan for tomorrow",
+    tasks: [
+      { id: "4", name: "Task 4", isDone: false },
+      { id: "5", name: "Task 5", isDone: false },
+      { id: "6", name: "Task 6", isDone: false },
+    ],
+  },
+];
+
 function ToDoApp() {
-  const [plans, setPlans] = useState<TaskCollection[]>([
-    {
-      id: 1,
-      name: "Plan for today",
-      tasks: [
-        { id: "1", name: "Task 1", isDone: false },
-        { id: "2", name: "Task 2", isDone: true },
-        { id: "3", name: "Task 3", isDone: false },
-      ],
-    },
-    {
-      id: 2,
-      name: "Plan for tomorrow",
-      tasks: [
-        { id: "4", name: "Task 4", isDone: false },
-        { id: "5", name: "Task 5", isDone: false },
-        { id: "6", name: "Task 6", isDone: false },
-      ],
-    },
-  ]);
-  const [selectedPlan] = useState<TaskCollection>(plans[0]);
-  const [tasks, setTasks] = useState<Task[]>(selectedPlan.tasks);
+  const [plans, setPlans] = useState<TaskCollection[]>(() => {
+    const savedPlansFromLocalStorage = localStorage.getItem("plans");
+    const savedPlans = JSON.parse(savedPlansFromLocalStorage!);
+    return savedPlans || sampleData;
+  });
+  const [selectedPlan, setSelectedPlan] = useState<TaskCollection>(plans[0]);
 
   const handleCreate = (name: string) => {
-    setTasks([...tasks, { id: name, name: name, isDone: false }]);
+    const updatedTasks = [
+      ...selectedPlan.tasks,
+      { id: name, name: name, isDone: false },
+    ];
+    setSelectedPlan({ ...selectedPlan, tasks: updatedTasks });
   };
 
   const handleRemove = (id: string) => {
-    const updatedTasks = tasks.filter((x) => x.id !== id);
-    setTasks(updatedTasks);
+    const updatedTasks = selectedPlan.tasks.filter((x) => x.id !== id);
+    setSelectedPlan({ ...selectedPlan, tasks: updatedTasks });
   };
 
   const handleChangeStatus = (id: string) => {
-    const updatedTasks = tasks.map((task) =>
+    const updatedTasks = selectedPlan.tasks.map((task) =>
       task.id != id ? task : { ...task, isDone: !task.isDone }
     );
-    setTasks(updatedTasks);
+    setSelectedPlan({ ...selectedPlan, tasks: updatedTasks });
   };
 
   const handleUpdateTasks = (tasks: Task[]) => {
-    setTasks(tasks);
+    setSelectedPlan({ ...selectedPlan, tasks: tasks });
   };
 
-  const setAllAsDone = tasks.map((task) => ({
+  const setAllAsDone = selectedPlan.tasks.map((task) => ({
     ...task,
     isDone: true,
   }));
 
-  const setAllAsNotDone = tasks.map((task) => ({
+  const setAllAsNotDone = selectedPlan.tasks.map((task) => ({
     ...task,
     isDone: false,
   }));
 
   const handleRemoveAll = () => {
-    const updatedTasks = tasks.every((task) => task.isDone)
+    const updatedTasks = selectedPlan.tasks.every((task) => task.isDone)
       ? setAllAsNotDone
       : setAllAsDone;
 
-    setTasks(updatedTasks);
+    setSelectedPlan({ ...selectedPlan, tasks: updatedTasks });
   };
 
   const handleSavePlan = () => {
     const updatedPlans = plans.map((plan) =>
-      plan.id == selectedPlan.id ? { ...plan, tasks: tasks } : plan
+      plan.id == selectedPlan.id ? { ...plan, tasks: selectedPlan.tasks } : plan
     );
     setPlans(updatedPlans);
+    localStorage.setItem("plans", JSON.stringify(updatedPlans));
   };
 
   const handleAddPlan = (planName: string) => {
-    const planToAdd = { id: 4, name: planName, tasks: [] };
+    const planToAdd = { id: plans.length + 1, name: planName, tasks: [] };
     plans.unshift(...[planToAdd]);
     setPlans(plans);
-    setTasks(planToAdd.tasks);
+    setSelectedPlan(planToAdd);
   };
 
   return (
     <>
       <TaskListNavigation
         plans={plans}
-        selectedList={setTasks}
+        selectPlan={setSelectedPlan}
         addNewPlan={handleAddPlan}
       />
 
@@ -94,7 +104,7 @@ function ToDoApp() {
         <CreateTask createTask={handleCreate} />
         <RemoveTasks markAllAsDone={handleRemoveAll} />
         <TaskList
-          tasks={tasks}
+          tasks={selectedPlan.tasks}
           handleRemove={handleRemove}
           changeStatus={handleChangeStatus}
           updateTasks={handleUpdateTasks}
