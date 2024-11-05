@@ -57,7 +57,7 @@ function TaskItem({ task, ...props }: TaskItemProps) {
         {isEdited ? (
           <button onClick={handleSave}>💾</button>
         ) : (
-          <button onClick={handleEdit}>✏️</button>
+          !task.isDone && <button onClick={handleEdit}>✏️</button>
         )}
         <button onClick={props.changeStatus}>
           {task.isDone ? "❌" : "✅"}
